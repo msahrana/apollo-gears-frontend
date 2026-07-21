@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import { Metadata } from "next"
+import { Navbar } from "@/components/shared/Navbar"
 
 const ralewayHeading = Raleway({
   subsets: ["latin"],
@@ -40,9 +41,8 @@ export default function RootLayout({
       )}
     >
       <body>
-        <div>Header</div>
+        <Navbar/>
         <ThemeProvider>{children}</ThemeProvider>
-        <div>Footer</div>
       </body>
     </html>
   )
