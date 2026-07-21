@@ -1,19 +1,34 @@
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import MotionCar from "@/components/homePage/MotionCar"
 
-export default function Page() {
+export default function Home() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2 bg-cyan-600">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+    <div>
+      <Card className="border-none bg-transparent py-8 shadow-none">
+        <CardContent className="flex items-center justify-between p-0">
+          <div className="w-2/5">
+            <h1 className="mb-2 text-6xl font-bold text-foreground">
+              Explore the Finest <span className="text-red-500">Global</span>{" "}
+              Offers
+            </h1>
+            <h4 className="my-4 text-xl text-muted-foreground">
+              Find your ideal ride for any adventure with our diverse range of
+              affordable and dependable car rentals.
+            </h4>
+            <div className="mt-6 flex gap-4">
+              <div className="space-x-4">
+                <Button>Book Now</Button>
+                <Button>Learn More</Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex w-3/5 justify-end">
+            <MotionCar />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
