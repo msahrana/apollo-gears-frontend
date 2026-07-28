@@ -1,7 +1,7 @@
 import React from "react"
 
-const AuthRoutes = ({ children }: { children: React.ReactNode }) => {
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return <div>{children}</div>
 }
 
-export default AuthRoutes
+export default AuthLayout

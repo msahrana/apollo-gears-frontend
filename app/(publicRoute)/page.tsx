@@ -5,7 +5,7 @@ import MotionCar from "@/components/homePage/MotionCar"
 export default function Home() {
   return (
     <div>
-      <Card className="border-none bg-transparent py-8 shadow-none">
+      <Card className="border-none bg-transparent px-8 py-0 shadow-none">
         <CardContent className="flex items-center justify-between p-0">
           <div className="w-2/5">
             <h1 className="mb-2 text-6xl font-bold text-foreground">
@@ -18,8 +18,8 @@ export default function Home() {
             </h4>
             <div className="mt-6 flex gap-4">
               <div className="space-x-4">
-                <Button>Book Now</Button>
-                <Button>Learn More</Button>
+                <Button className="bg-red-500 hover:bg-black">Book Now</Button>
+                <Button className="hover:bg-red-500">Learn More</Button>
               </div>
             </div>
           </div>

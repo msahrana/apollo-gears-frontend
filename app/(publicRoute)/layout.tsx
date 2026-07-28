@@ -1,7 +1,7 @@
 import React from "react"
 
-const PublicRoutes = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return <div>{children}</div>
 }
 
-export default PublicRoutes
+export default PublicLayout

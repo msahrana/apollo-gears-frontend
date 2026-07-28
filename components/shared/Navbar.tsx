@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils"
 /* -------------------------------------------------------------------------- */
 /*                               Logo Component                               */
 /* -------------------------------------------------------------------------- */
+
 function Logo(props: React.SVGAttributes<SVGElement>) {
   return (
     <svg
@@ -41,6 +42,7 @@ function Logo(props: React.SVGAttributes<SVGElement>) {
 /* -------------------------------------------------------------------------- */
 /*                           Hamburger Icon Component                         */
 /* -------------------------------------------------------------------------- */
+
 const HamburgerIcon = ({
   className,
   ...props
@@ -61,10 +63,12 @@ const HamburgerIcon = ({
       d="M4 12L20 12"
       className="origin-center -translate-y-1.5 transition-all duration-300 group-aria-expanded:translate-y-0 group-aria-expanded:-rotate-45"
     />
+
     <path
       d="M4 12H20"
       className="transition-all duration-300 group-aria-expanded:opacity-0"
     />
+
     <path
       d="M4 12H20"
       className="origin-center translate-y-1.5 transition-all duration-300 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-45"
@@ -75,6 +79,7 @@ const HamburgerIcon = ({
 /* -------------------------------------------------------------------------- */
 /*                               Navbar Types                                 */
 /* -------------------------------------------------------------------------- */
+
 export interface NavbarLink {
   href: string
   label: string
@@ -82,13 +87,15 @@ export interface NavbarLink {
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   logoText?: string
+  logoSuffix?: string
   logoHref?: string
   navigationLinks?: NavbarLink[]
 }
 
 /* -------------------------------------------------------------------------- */
-/*                           Default Navigation Links                         */
+/*                           Navigation Links                                 */
 /* -------------------------------------------------------------------------- */
+
 const defaultLinks: NavbarLink[] = [
   { href: "/", label: "Home" },
   { href: "/cars", label: "Cars" },
@@ -99,11 +106,13 @@ const defaultLinks: NavbarLink[] = [
 /* -------------------------------------------------------------------------- */
 /*                              Navbar Component                              */
 /* -------------------------------------------------------------------------- */
+
 export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   (
     {
       className,
-      logoText = "Apollo Gears",
+      logoText = "Apollo",
+      logoSuffix = "Gears",
       logoHref = "/",
       navigationLinks = defaultLinks,
       ...props
@@ -113,6 +122,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     const pathname = usePathname()
 
     const [isMobile, setIsMobile] = React.useState(false)
+
     const containerRef = React.useRef<HTMLElement>(null)
 
     React.useEffect(() => {
@@ -158,19 +168,21 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       <header
         ref={combinedRef}
         className={cn(
-          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
+          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur",
           className
         )}
         {...props}
       >
         <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
           {/* Left */}
+
           <div className="flex items-center gap-2">
             {/* Mobile Menu */}
+
             {isMobile && (
               <Popover>
                 <PopoverTrigger className="group">
-                  <Button variant="ghost" size="icon" className="group h-9 w-9">
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
                     <HamburgerIcon />
                   </Button>
                 </PopoverTrigger>
@@ -182,9 +194,9 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                         key={link.href}
                         href={link.href}
                         className={cn(
-                          "rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
+                          "rounded-md px-3 py-2 text-sm hover:bg-accent",
                           isActive(link.href)
-                            ? "bg-accent text-accent-foreground"
+                            ? "bg-accent"
                             : "text-muted-foreground"
                         )}
                       >
@@ -195,16 +207,13 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
                   <div className="mt-2 border-t pt-2">
                     <Link href="/login">
-                      <Button
-                        variant="ghost"
-                        className="mb-2 w-full justify-start"
-                      >
+                      <Button variant="ghost" className="w-full justify-start">
                         Login
                       </Button>
                     </Link>
 
                     <Link href="/signup">
-                      <Button className="w-full">Sign Up</Button>
+                      <Button className="mt-2 w-full">Sign Up</Button>
                     </Link>
                   </div>
                 </PopoverContent>
@@ -212,15 +221,19 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             )}
 
             {/* Logo */}
+
             <Link href={logoHref} className="flex items-center gap-2">
-              <Logo className="text-2xl text-primary" />
+              <Logo className="text-2xl" />
 
               <span className="hidden text-xl font-bold sm:block">
-                {logoText}
+                <span className="text-black dark:text-white">{logoText}</span>
+
+                <span className="text-red-500">{logoSuffix}</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
+
             {!isMobile && (
               <NavigationMenu>
                 <NavigationMenuList className="gap-1">
@@ -229,9 +242,9 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       <Link
                         href={link.href}
                         className={cn(
-                          "inline-flex h-9 items-center rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                          "inline-flex h-9 items-center rounded-md px-4 text-sm font-medium hover:bg-accent",
                           isActive(link.href)
-                            ? "bg-accent text-accent-foreground"
+                            ? "bg-accent"
                             : "text-muted-foreground"
                         )}
                       >
@@ -245,6 +258,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           </div>
 
           {/* Right */}
+
           {!isMobile && (
             <div className="flex items-center gap-2">
               <Link href="/login">
