@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import { Metadata } from "next"
 import { Navbar } from "@/components/shared/Navbar"
+import { Toaster } from "sonner"
 
 const ralewayHeading = Raleway({
   subsets: ["latin"],
@@ -41,8 +42,12 @@ export default function RootLayout({
       )}
     >
       <body>
-        <Navbar/>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Navbar />
+        <ThemeProvider>
+          {children}
+
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
       </body>
     </html>
   )
