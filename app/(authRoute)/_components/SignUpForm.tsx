@@ -30,7 +30,7 @@ const SignUpForm = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!state) return
+    if (!state.message) return
 
     if (state.success) {
       toast.success(state.message)
@@ -48,7 +48,7 @@ const SignUpForm = () => {
       <Card className="space-y-4 p-5">
         <Input
           name="name"
-          type="name"
+          type="text"
           placeholder="Enter Your Full Name"
           required
         />

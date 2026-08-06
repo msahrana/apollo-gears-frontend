@@ -1,25 +1,36 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
+
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
 
-/* -------------------------------------------------------------------------- */
-/*                               Logo Component                               */
-/* -------------------------------------------------------------------------- */
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { LayoutDashboard, LogOut } from "lucide-react"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+import { toast } from "sonner"
+
+import { logout } from "@/service/logout"
+
+import { cn } from "@/lib/utils"
 
 function Logo(props: React.SVGAttributes<SVGElement>) {
   return (
@@ -28,7 +39,6 @@ function Logo(props: React.SVGAttributes<SVGElement>) {
       height="1em"
       viewBox="0 0 64 64"
       fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <rect x="8" y="28" width="48" height="16" rx="3" />
@@ -39,228 +49,158 @@ function Logo(props: React.SVGAttributes<SVGElement>) {
   )
 }
 
-/* -------------------------------------------------------------------------- */
-/*                           Hamburger Icon Component                         */
-/* -------------------------------------------------------------------------- */
-
-const HamburgerIcon = ({
-  className,
-  ...props
-}: React.SVGAttributes<SVGElement>) => (
-  <svg
-    className={cn("pointer-events-none", className)}
-    width={18}
-    height={18}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path
-      d="M4 12L20 12"
-      className="origin-center -translate-y-1.5 transition-all duration-300 group-aria-expanded:translate-y-0 group-aria-expanded:-rotate-45"
-    />
-
-    <path
-      d="M4 12H20"
-      className="transition-all duration-300 group-aria-expanded:opacity-0"
-    />
-
-    <path
-      d="M4 12H20"
-      className="origin-center translate-y-1.5 transition-all duration-300 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-45"
-    />
-  </svg>
-)
-
-/* -------------------------------------------------------------------------- */
-/*                               Navbar Types                                 */
-/* -------------------------------------------------------------------------- */
-
-export interface NavbarLink {
-  href: string
-  label: string
-}
-
-export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
-  logoText?: string
-  logoSuffix?: string
-  logoHref?: string
-  navigationLinks?: NavbarLink[]
-}
-
-/* -------------------------------------------------------------------------- */
-/*                           Navigation Links                                 */
-/* -------------------------------------------------------------------------- */
-
-const defaultLinks: NavbarLink[] = [
-  { href: "/", label: "Home" },
-  { href: "/cars", label: "Cars" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+const links = [
+  {
+    href: "/",
+    label: "Home",
+  },
+  {
+    href: "/cars",
+    label: "Cars",
+  },
+  {
+    href: "/about",
+    label: "About",
+  },
+  {
+    href: "/contact",
+    label: "Contact",
+  },
 ]
 
-/* -------------------------------------------------------------------------- */
-/*                              Navbar Component                              */
-/* -------------------------------------------------------------------------- */
+export function Navbar() {
+  const router = useRouter()
 
-export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
-  (
-    {
-      className,
-      logoText = "Apollo",
-      logoSuffix = "Gears",
-      logoHref = "/",
-      navigationLinks = defaultLinks,
-      ...props
-    },
-    ref
-  ) => {
-    const pathname = usePathname()
+  const pathname = usePathname()
 
-    const [isMobile, setIsMobile] = React.useState(false)
+  const [user, setUser] = React.useState<any>(null)
 
-    const containerRef = React.useRef<HTMLElement>(null)
+  const [loading, setLoading] = React.useState(true)
 
-    React.useEffect(() => {
-      const handleResize = () => {
-        if (containerRef.current) {
-          setIsMobile(containerRef.current.offsetWidth < 768)
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/me", {
+          cache: "no-store",
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          setUser(data.data)
         }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
       }
-
-      handleResize()
-
-      const resizeObserver = new ResizeObserver(handleResize)
-
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current)
-      }
-
-      return () => resizeObserver.disconnect()
-    }, [])
-
-    const combinedRef = React.useCallback(
-      (node: HTMLElement | null) => {
-        containerRef.current = node
-
-        if (typeof ref === "function") {
-          ref(node)
-        } else if (ref) {
-          ref.current = node
-        }
-      },
-      [ref]
-    )
-
-    const isActive = (href: string) => {
-      if (href === "/") {
-        return pathname === "/"
-      }
-
-      return pathname.startsWith(href)
     }
 
-    return (
-      <header
-        ref={combinedRef}
-        className={cn(
-          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur",
-          className
-        )}
-        {...props}
-      >
-        <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
-          {/* Left */}
+    fetchUser()
+  }, [])
 
-          <div className="flex items-center gap-2">
-            {/* Mobile Menu */}
+  const handleLogout = async () => {
+    try {
+      await logout()
 
-            {isMobile && (
-              <Popover>
-                <PopoverTrigger className="group">
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <HamburgerIcon />
-                  </Button>
-                </PopoverTrigger>
+      setUser(null)
 
-                <PopoverContent align="start" className="w-52 p-2">
-                  <nav className="flex flex-col gap-1">
-                    {navigationLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className={cn(
-                          "rounded-md px-3 py-2 text-sm hover:bg-accent",
-                          isActive(link.href)
-                            ? "bg-accent"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
+      toast.success("Logged out successfully")
 
-                  <div className="mt-2 border-t pt-2">
-                    <Link href="/login">
-                      <Button variant="ghost" className="w-full justify-start">
-                        Login
-                      </Button>
-                    </Link>
+      router.replace("/login")
 
-                    <Link href="/signup">
-                      <Button className="mt-2 w-full">Sign Up</Button>
-                    </Link>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
+      router.refresh()
+    } catch (error) {
+      toast.error("Logout failed")
+    }
+  }
+  const handleDashboard = () => {
+    if (user.role === "admin") {
+      router.push("/admin-dashboard")
+    } else if (user.role === "driver") {
+      router.push("/driver-dashboard")
+    } else {
+      router.push("/dashboard")
+    }
+  }
 
-            {/* Logo */}
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4">
+        {/* LEFT */}
 
-            <Link href={logoHref} className="flex items-center gap-2">
-              <Logo className="text-2xl" />
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo className="text-3xl" />
 
-              <span className="hidden text-xl font-bold sm:block">
-                <span className="text-black dark:text-white">{logoText}</span>
+            <span className="text-xl font-bold">
+              <span>Apollo</span>
 
-                <span className="text-red-500">{logoSuffix}</span>
-              </span>
-            </Link>
+              <span className="text-red-500">Gears</span>
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              {links.map((link) => (
+                <NavigationMenuItem key={link.href}>
+                  <Link
+                    href={link.href}
 
-            {!isMobile && (
-              <NavigationMenu>
-                <NavigationMenuList className="gap-1">
-                  {navigationLinks.map((link) => (
-                    <NavigationMenuItem key={link.href}>
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "inline-flex h-9 items-center rounded-md px-4 text-sm font-medium hover:bg-accent",
-                          isActive(link.href)
-                            ? "bg-accent"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    </NavigationMenuItem>
-                  ))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            )}
-          </div>
+                    className={cn(
+                      "flex h-9 items-center rounded-md px-4 text-sm",
+                      pathname === link.href
+                        ? "bg-accent"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
-          {/* Right */}
+        {/* RIGHT */}
 
-          {!isMobile && (
-            <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {loading ? (
+            <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
+          ) : user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex h-10 w-10 items-center justify-center rounded-full outline-none hover:bg-accent">
+                <Avatar>
+                  <AvatarImage src={user.img || ""} />
+
+                  <AvatarFallback>
+                    {user.name?.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-3 py-2">
+                  <p className="font-medium">{user.name}</p>
+
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                </div>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem onClick={handleDashboard}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  Dashboard
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
               <Link href="/login">
                 <Button variant="ghost">Login</Button>
               </Link>
@@ -268,12 +208,10 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               <Link href="/signup">
                 <Button>Sign Up</Button>
               </Link>
-            </div>
+            </>
           )}
         </div>
-      </header>
-    )
-  }
-)
-
-Navbar.displayName = "Navbar"
+      </div>
+    </header>
+  )
+}

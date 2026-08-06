@@ -49,24 +49,30 @@ export const loginAction = async (
 
     cookieStore.set("accessToken", result.data.accessToken, {
       httpOnly: true,
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24, // 1 day
       sameSite: "lax",
     })
 
     cookieStore.set("refreshToken", result.data.refreshToken, {
       httpOnly: true,
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
       sameSite: "lax",
     })
 
     const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload
 
-    if (decodedToken.role === "user") {
-      redirect("/dashboard")
-    } else if (decodedToken.role === "driver") {
-      redirect("/driver-dashboard")
-    } else if (decodedToken.role === "admin") {
-      redirect("/admin-dashboard")
+    switch (decodedToken.role) {
+      case "user":
+        redirect("/dashboard")
+
+      case "driver":
+        redirect("/driver-dashboard")
+
+      case "admin":
+        redirect("/admin-dashboard")
+
+      default:
+        redirect("/")
     }
   }
 
@@ -95,10 +101,6 @@ export const RegisterAction = async (
   )
 
   const result = await res.json()
-
-  // if (res.ok && result.success) {
-  //   redirect("/login")
-  // }
 
   return result
 }
