@@ -46,14 +46,15 @@ export const loginAction = async (
 
   if (result.success) {
     const cookieStore = await cookies()
+    const { accessToken, refreshToken } = result.data
 
-    cookieStore.set("accessToken", result.data.accessToken, {
+    cookieStore.set("accessToken", accessToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24, // 1 day
       sameSite: "lax",
     })
 
-    cookieStore.set("refreshToken", result.data.refreshToken, {
+    cookieStore.set("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 7, // 7 days
       sameSite: "lax",
