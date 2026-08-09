@@ -3,17 +3,19 @@ import { Geist_Mono, Outfit, Raleway } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
-import { Metadata } from "next"
+import type { Metadata } from "next"
 import { Navbar } from "@/components/shared/Navbar"
 import { Toaster } from "sonner"
-import { getMe } from "@/service/getMe"
 
 const ralewayHeading = Raleway({
   subsets: ["latin"],
   variable: "--font-heading",
 })
 
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" })
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -30,8 +32,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const user = await getMe()
-
   return (
     <html
       lang="en"
@@ -45,11 +45,12 @@ export default async function RootLayout({
       )}
     >
       <body>
-        <Navbar user={user} />
         <ThemeProvider>
+          <Navbar />
+
           {children}
 
-          <Toaster richColors position="top-right" />
+          <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>
     </html>

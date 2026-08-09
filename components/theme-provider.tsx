@@ -1,25 +1,12 @@
 "use client"
 
 import * as React from "react"
+
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 
-function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
-  return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      {...props}
-    >
-      <ThemeHotkey />
-      {children}
-    </NextThemesProvider>
-  )
-}
+// ========================================
+// CHECK IF USER IS TYPING
+// ========================================
 
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -33,6 +20,10 @@ function isTypingTarget(target: EventTarget | null) {
     target.tagName === "SELECT"
   )
 }
+
+// ========================================
+// DARK / LIGHT MODE HOTKEY
+// ========================================
 
 function ThemeHotkey() {
   const { resolvedTheme, setTheme } = useTheme()
@@ -66,6 +57,29 @@ function ThemeHotkey() {
   }, [resolvedTheme, setTheme])
 
   return null
+}
+
+// ========================================
+// THEME PROVIDER
+// ========================================
+
+function ThemeProvider({
+  children,
+  ...props
+}: React.ComponentProps<typeof NextThemesProvider>) {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      {...props}
+    >
+      <ThemeHotkey />
+
+      {children}
+    </NextThemesProvider>
+  )
 }
 
 export { ThemeProvider }
