@@ -62,18 +62,12 @@ export const loginAction = async (
 
     const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload
 
-    switch (decodedToken.role) {
-      case "user":
-        redirect("/dashboard")
-
-      case "driver":
-        redirect("/driver-dashboard")
-
-      case "admin":
-        redirect("/admin-dashboard")
-
-      default:
-        redirect("/")
+    if (decodedToken.role === "user") {
+      redirect("/dashboard")
+    } else if (decodedToken.role === "driver") {
+      redirect("/driver-dashboard")
+    } else if (decodedToken.role === "admin") {
+      redirect("/admin-dashboard")
     }
   }
 

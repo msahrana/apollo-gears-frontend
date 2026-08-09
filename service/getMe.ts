@@ -1,20 +1,31 @@
-// "use server"
+"use server"
 
-// import { cookies } from "next/headers"
+import { cookies } from "next/headers"
 
-// export const getMe = async () => {
-//   const cookieStore = await cookies()
+export const getMe = async () => {
+  const cookieStore = await cookies()
 
-//   const token = cookieStore.get("accessToken")?.value
+  const accessToken = cookieStore.get("accessToken")?.value || null
 
-//   if (!token) return null
+  if (!accessToken) {
+    return {
+      success: false,
+      message: "User not logged in!",
+    }
+  }
 
-//   const res = await fetch(`${process.env.BACKEND_API_URL}/api/v1/auth/me`, {
-//     headers: {
-//       Authorization: token,
-//     },
-//     cache: "no-store",
-//   })
+  const res = await fetch(`${process.env.BACKEND_API_URL}/api/users/me`, {
+    headers: {
+      Cookie: `accessToken=${accessToken}`,
+    },
+    cache: "force-cache",
+    next: {
+      revalidate: 60 * 60 * 24, // 1day
+      tags: ["my-profile"],
+    },
+  })
 
-//   return res.json()
-// }
+  const result = res.json()
+
+  return result
+}
